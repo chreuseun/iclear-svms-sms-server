@@ -1,1 +1,1 @@
-console.log('application running: svms-sms-server');
+require('./src/app');
