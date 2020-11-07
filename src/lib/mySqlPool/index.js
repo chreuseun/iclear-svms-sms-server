@@ -1,1 +1,1 @@
-module.export = require('./mySqlPool');
+module.exports = require('./mysqlPool');

@@ -1,8 +1,38 @@
-const express = require('express')
-const app = express()
+const {mySql} = require('./handlers');
+const getLocalIpAddress = require('./lib/getLocalIpAddress');
 
-const { PORT, IP_ADDRESS } = require('../config');
-const { getLocalIpAddress, mySqlPool } = require('./lib')
+const runSmsServer = async() => {
+ const getUnsentMessages = await  mySql.tables.upload_payment_history.getAllUnsentMessages();
 
-const express_app_ip_address = getLocalIpAddress || IP_ADDRESS;
-console.log('MySqlPool: ', mySqlPool )
+ const {data , error} = getUnsentMessages
+
+  if(error){
+    console.log('Get usent messages error')
+    return
+  }
+
+
+  if(data.length > 0){
+    console.log({unsent_messages: data.length, error })
+
+    setTimeout(()=>{
+      runSmsServer();
+    },3000)
+  
+  }else{
+    
+    setTimeout(()=>{
+      runSmsServer();
+    },1000)
+  }
+
+}
+
+
+runSmsServer();
+
+
+
+
+
+
