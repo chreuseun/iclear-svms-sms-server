@@ -23,6 +23,22 @@ const runSmsServer = async() => {
   if(data.length > 0 && !error){
     console.log({unsent_messages: data.length, error, data })
 
+    const {
+      id,
+      studentUsername,
+      amount,
+      paymentDate,
+      uploaded_by,
+      created_at,
+      updated_at,
+      is_sms,
+      sms_provider_service_id,
+      studfname,
+      studmname,
+      studlname
+    } = data || {}
+
+
     setTimeout(()=>{
       runSmsServer();
     },3000)
