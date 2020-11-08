@@ -1,21 +1,9 @@
 const { mySqlPool } = require('./../../../../../lib')
 
 const sql = `
-  SELECT 
-    uph.*,
-      st.studfname,
-      studmname,
-      studlname,
-      familyphone
-      
-  FROM upload_payment_history as uph
-  JOIN student_ as st ON st.username = uph.studentUsername
-
-  WHERE uph.sms_provider_service_id IS NULL
-    AND familyphone > 0
-
-  ORDER BY uph.id ASC
-  LIMIT 1
+  UPDATE  upload_payment_history
+  SET sms_provider_service_id = ?
+  WHERE id = ?;
 `
 
 const handleResolve = ({data = [], resolve, error = false}) => {
@@ -23,7 +11,7 @@ const handleResolve = ({data = [], resolve, error = false}) => {
 }
 
 
-module.exports = () =>  new Promise( (resolve, reject) => {
+module.exports = ({ id = '', sms_provider_service_id = null }) =>  new Promise( (resolve, reject) => {
   mySqlPool.getConnection( (err, connection) => {
     if(err) {
       handleResolve({
@@ -33,8 +21,7 @@ module.exports = () =>  new Promise( (resolve, reject) => {
       })
     }
   
-    connection.query( sql,  (error, results, fields) => {
-      // When done with the connection, release it.
+    connection.query( sql ,[ sms_provider_service_id, id ],  (error, results, fields) => {
       connection.release();
 
       if(results){
@@ -45,7 +32,6 @@ module.exports = () =>  new Promise( (resolve, reject) => {
         })
       }
 
-      // Handle error after the release.
       if (error){
         handleResolve({
           data: [],
@@ -54,7 +40,6 @@ module.exports = () =>  new Promise( (resolve, reject) => {
         })
       };
   
-      // Don't use the connection here, it has been returned to the pool.
     });
   });
 })
