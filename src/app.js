@@ -1,4 +1,14 @@
 const { mySql } = require('./handlers');
+const { axiosClient, httpSendSMS } = require('./lib');
+const { SMS_TEMPLATE, SMS_PROVIDER_ENDPOINT , SMS_PROVIDER_API_KEY} = require('../config')
+const axios = require('axios');
+
+
+const client=axios.create({
+  baseURL: SMS_PROVIDER_ENDPOINT,
+  timeout: 9000,
+  headers: {}
+});
 
 const runSmsServer = async() => {
  const getUnsentMessages = await  mySql.tables.upload_payment_history.getAllUnsentMessages();
@@ -10,8 +20,8 @@ const runSmsServer = async() => {
     return
   }
 
-  if(data.length > 0){
-    console.log({unsent_messages: data.length, error })
+  if(data.length > 0 && !error){
+    console.log({unsent_messages: data.length, error, data })
 
     setTimeout(()=>{
       runSmsServer();
@@ -23,10 +33,12 @@ const runSmsServer = async() => {
       runSmsServer();
     },1000)
   }
-
 }
 
-runSmsServer();
+
+runSmsServer()
+
+// httpSendSMS({message: SMS_TEMPLATE, contact_number:'9663085638'});
 
 
 
