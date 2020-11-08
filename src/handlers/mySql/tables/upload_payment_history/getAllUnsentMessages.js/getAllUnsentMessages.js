@@ -2,14 +2,13 @@ const { mySqlPool } = require('./../../../../../lib')
 
 const sql = `
   SELECT 
-  *
+    uph.*,
+      st.studfname,
+      studmname,
+      studlname
+      
   FROM upload_payment_history as uph
   JOIN student_ as st ON st.username = uph.studentUsername
-
-  WHERE uph.sms_provider_service_id IS NULL
-
-  ORDER BY uph.id ASC
-  LIMIT 1;
 `
 
 const handleResolve = ({data = [], resolve, error = false}) => {
